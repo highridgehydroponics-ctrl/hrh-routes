@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HRH Route — Tue 05/26/2026 — Rene Jimenez</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#1a1d23;color:#e2e8f0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+header{background:#0e1014;border-bottom:2px solid #f59e0b;padding:0 20px;height:54px;display:flex;align-items:center;gap:14px}
+.logo{font-family:monospace;font-size:14px;color:#f59e0b;font-weight:700;letter-spacing:2px}
+.hd{font-size:13px;color:#94a3b8;font-weight:600}
+.hd-date{font-family:monospace;font-size:11px;color:#f59e0b;background:#1e2128;border:1px solid #2a2d35;padding:3px 10px;border-radius:3px}
+.sp{flex:1}
+.btn{padding:7px 14px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:inherit}
+.btn-amber{background:#92400e;color:#fcd34d}.btn-amber:hover{background:#b45309}
+.btn-green{background:#059669;color:#fff}.btn-green:hover{background:#10b981}
+.btn-ghost{background:#1e2128;color:#cbd5e1;border:1px solid #2a2d35}.btn-ghost:hover{background:#2a2d35}
+.stats{background:#0e1014;border-bottom:1px solid #1e2128;display:grid;grid-template-columns:repeat(4,1fr)}
+.sc{padding:10px 20px;border-right:1px solid #1e2128}
+.sc:last-child{border-right:none}
+.sl{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;font-weight:700;margin-bottom:3px;font-family:monospace}
+.sv{font-family:monospace;font-size:22px;font-weight:700;color:#f59e0b}
+.ss{font-size:11px;color:#64748b;margin-top:3px}
+.wrap{max-width:760px;margin:28px auto;padding:0 16px}
+.route-label{font-family:monospace;font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;background:#0e1014;border-radius:8px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.4)}
+thead th{background:#080a0d;color:#64748b;font-size:10px;text-transform:uppercase;letter-spacing:1px;padding:10px 12px;text-align:left;font-family:monospace;border-bottom:1px solid #1e2128}
+tbody tr{border-bottom:1px solid #121518;transition:background .1s;cursor:grab}
+tbody tr:hover{background:#1e2128}
+tbody tr:last-child{border-bottom:none}
+td{padding:10px 12px;vertical-align:middle}
+td.num{font-family:monospace;font-weight:700;color:#f59e0b;font-size:14px;cursor:pointer;user-select:none;width:38px}
+td.num:hover{color:#fbbf24}
+td.name{font-weight:700;color:#fff;font-size:13px}
+td.addr{font-size:11px;color:#64748b}
+td.time{font-family:monospace;font-size:12px;color:#cbd5e1;white-space:nowrap}
+td.time .lbl{display:block;font-size:9px;color:#475569;text-transform:uppercase;margin-bottom:1px}
+.num-input{width:38px;font-family:monospace;font-weight:700;color:#f59e0b;font-size:13px;background:#1e2128;border:1px solid #f59e0b;border-radius:3px;text-align:center;padding:2px 3px;outline:none}
+.approve-wrap{position:fixed;bottom:0;left:0;right:0;background:#0e1014;border-top:1px solid #1e2128;padding:12px 20px;display:flex;gap:10px;align-items:center;z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,.5)}
+.approve-btn{flex:1;padding:13px;background:#059669;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s;letter-spacing:.3px}
+.approve-btn:hover:not(:disabled){background:#10b981;transform:translateY(-1px);box-shadow:0 4px 16px rgba(5,150,105,.4)}
+.approve-btn.approved{background:#0d2a1e;color:#34d399;border:1px solid #34d399;cursor:default;font-size:14px}
+.maps-btn{padding:13px 18px;background:#1d4ed8;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
+.maps-btn:hover{background:#2563eb}
+.pb{padding-bottom:70px}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(60px);background:#1e2128;border:1px solid #374151;border-radius:6px;padding:8px 16px;font-size:12px;color:#e2e8f0;z-index:200;transition:transform .3s;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.green{border-color:#22c55e;color:#86efac}
+.toast.amber{border-color:#f59e0b;color:#fcd34d}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">HRH</div>
+  <div class="hd">Driver —</div>
+  <div class="hd" style="color:#fff;font-size:14px;font-weight:700">Rene Jimenez</div>
+  <div class="hd-date">TUE MAY 26 · 6 STOPS</div>
+  <div class="sp"></div>
+  <button class="btn btn-ghost" onclick="reorder()">🔀 Reorder</button>
+</header>
+
+<div class="stats">
+  <div class="sc"><div class="sl">⏱ Route Duration</div><div class="sv">1h 38m</div><div class="ss">driving + 5 min/stop</div></div>
+  <div class="sc"><div class="sl">📏 Est. Miles</div><div class="sv">34.3</div><div class="ss">total distance</div></div>
+  <div class="sc"><div class="sl">🚜 Depart Farm</div><div class="sv">4:00 PM</div><div class="ss">Bridgeport</div></div>
+  <div class="sc"><div class="sl">🏁 Est. Home</div><div class="sv">5:38 PM</div><div class="ss">Norwalk</div></div>
+</div>
+
+<div class="wrap pb">
+  <div class="route-label">↑ Click any stop number to change its position &nbsp;·&nbsp; 🔀 Reorder = shortest distance</div>
+  <table>
+    <thead><tr><th>#</th><th>Customer</th><th>Address</th><th>Arrive</th><th>Depart</th></tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<div class="approve-wrap">
+  <a class="maps-btn" id="maps-btn" href="#" target="_blank" rel="noopener">🗺️ Directions</a>
+  <button class="approve-btn" id="approve-btn" onclick="approveRoute()">✅ Approve Route → AppSheet</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const APPSHEET_APP_ID  = 'bea55701-8006-4581-a791-19a75092943f';
+const APPSHEET_API_KEY = 'V2-f4zl4-pDmwB-IZ9zh-t6ari-vPhJu-FmAwJ-WQ46U-LIUqO';
+const ROUTE_DATE       = '05/26/2026';
+const STOP_NUM_OFFSET  = 100; // Rene = 100
+const FARM_ADDR = '1 1/2 Island Brook Ave, Bridgeport, CT 06606';
+
+let stops = [{"num": 1, "name": "The Pantry", "addr": "1580 Post Rd, Fairfield, CT 06824", "arrive": "4:10 PM", "depart": "4:15 PM"}, {"num": 2, "name": "Massi Co", "addr": "90 Post Rd E, Westport, CT 06880", "arrive": "4:26 PM", "depart": "4:31 PM"}, {"num": 3, "name": "Hudson Malone", "addr": "323 Main St, Westport, CT 06880", "arrive": "4:32 PM", "depart": "4:37 PM"}, {"num": 4, "name": "Parlor Pizza", "addr": "5 River Rd, Wilton, CT 06897", "arrive": "4:46 PM", "depart": "4:51 PM"}, {"num": 5, "name": "Marcia Selden Catering", "addr": "65 Research Dr, Stamford, CT 06906", "arrive": "5:09 PM", "depart": "5:14 PM"}, {"num": 6, "name": "Table 104", "addr": "299 Long Ridge Rd, Stamford, CT 06902", "arrive": "5:18 PM", "depart": "5:23 PM"}];
+let approved = false;
+
+function toast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+function renumber() { stops.forEach((s,i) => s.num = STOP_NUM_OFFSET + i + 1); }
+
+function render() {
+  renumber();
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = stops.map((s,i) => `
+    <tr draggable="true" data-i="${i}" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="drop(event,this)">
+      <td class="num" onclick="editNum(${i})" title="Click to reposition this stop">${s.num}</td>
+      <td class="name">${s.name}</td>
+      <td class="addr">${s.addr}</td>
+      <td class="time"><span class="lbl">Arrive</span>${s.arrive}</td>
+      <td class="time"><span class="lbl">Depart</span>${s.depart}</td>
+    </tr>
+  `).join('');
+
+  // Maps link
+  const waypoints = [FARM_ADDR, ...stops.map(s => s.addr)];
+  document.getElementById('maps-btn').href = 'https://www.google.com/maps/dir/' + waypoints.map(a => encodeURIComponent(a)).join('/');
+
+  if (approved) {
+    const btn = document.getElementById('approve-btn');
+    btn.className = 'approve-btn approved';
+    btn.textContent = '✅ Route Approved';
+    btn.disabled = true;
+  }
+}
+
+function editNum(i) {
+  const rows = document.querySelectorAll('#tbody tr');
+  const td = rows[i].cells[0];
+  const cur = stops[i].num;
+  td.innerHTML = `<input class="num-input" type="number" min="1" max="${stops.length}" value="${i+1}" id="ne">`;
+  const inp = document.getElementById('ne');
+  inp.focus(); inp.select();
+  function commit() {
+    const raw = parseInt(inp.value);
+    if (!isNaN(raw) && raw >= 1 && raw <= stops.length) {
+      const newIdx = raw - 1;
+      const [moved] = stops.splice(i, 1);
+      stops.splice(newIdx, 0, moved);
+      if (approved) { approved = false; document.getElementById('approve-btn').className = 'approve-btn'; document.getElementById('approve-btn').textContent = '🔄 Re-approve Route → AppSheet'; document.getElementById('approve-btn').disabled = false; }
+    }
+    render();
+  }
+  inp.addEventListener('keydown', e => { if (e.key==='Enter') commit(); if (e.key==='Escape') render(); });
+  inp.addEventListener('blur', commit);
+}
+
+// Drag-and-drop reorder
+let dragIdx = null;
+function dragStart(e) { dragIdx = +e.currentTarget.dataset.i; e.dataTransfer.effectAllowed='move'; }
+function dragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect='move'; }
+function drop(e, row) {
+  e.preventDefault();
+  const toIdx = +row.dataset.i;
+  if (dragIdx !== null && dragIdx !== toIdx) {
+    const [moved] = stops.splice(dragIdx, 1);
+    stops.splice(toIdx, 0, moved);
+    if (approved) { approved = false; document.getElementById('approve-btn').className = 'approve-btn'; document.getElementById('approve-btn').textContent = '🔄 Re-approve Route → AppSheet'; document.getElementById('approve-btn').disabled = false; }
+    render();
+  }
+  dragIdx = null;
+}
+
+function reorder() {
+  // Simple nearest-neighbor from farm
+  const farmLat = 41.1979603, farmLng = -73.1872799;
+  function hav(a, b) {
+    const R=3958.8, dLat=(b.lat-a.lat)*Math.PI/180, dLng=(b.lng-a.lng)*Math.PI/180;
+    const x = Math.sin(dLat/2)**2 + Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLng/2)**2;
+    return R*2*Math.asin(Math.sqrt(x));
+  }
+  const coords = { "The Pantry": {lat:41.1415735,lng:-73.2598577}, "Massi Co": {lat:41.1410965,lng:-73.3604157}, "Hudson Malone": {lat:41.150115,lng:-73.3624548}, "Parlor Pizza": {lat:41.1912823,lng:-73.4316489}, "Marcia Selden Catering": {lat:41.0768498,lng:-73.5189737}, "Table 104": {lat:41.080936,lng:-73.5536045} };
+  let rem = [...stops], cur = {lat:farmLat,lng:farmLng}, ord = [];
+  while (rem.length) {
+    const c = coords[rem[0].name] || cur;
+    let best=0, bestD=Infinity;
+    rem.forEach((s,i) => { const d = hav(cur, coords[s.name]||cur); if(d<bestD){bestD=d;best=i;} });
+    ord.push(rem.splice(best,1)[0]);
+    cur = coords[ord[ord.length-1].name] || cur;
+  }
+  stops = ord;
+  render();
+  toast('🔀 Reordered to shortest distance', 'amber');
+}
+
+let _step = 0;
+async function approveRoute() {
+  if (approved) return;
+  const btn = document.getElementById('approve-btn');
+  if (_step === 0) {
+    btn.textContent = '⚠️ Confirm? Tap again to write to AppSheet';
+    btn.style.background = '#b45309';
+    _step = 1;
+    setTimeout(() => { if(_step===1){ btn.textContent='✅ Approve Route → AppSheet'; btn.style.background=''; _step=0; } }, 4000);
+    return;
+  }
+  _step = 0;
+  btn.disabled = true;
+  btn.textContent = '⏳ Updating AppSheet...';
+  toast('📝 Writing stop numbers to AppSheet...', 'amber');
+  try {
+    const url = `https://api.appsheet.com/api/v2/apps/${APPSHEET_APP_ID}/tables/order/Action`;
+    // Fetch today's orders to match by name
+    const findResp = await fetch(url, {
+      method: 'POST',
+      headers: {'ApplicationAccessKey': APPSHEET_API_KEY, 'Content-Type': 'application/json'},
+      body: JSON.stringify({ Action:'Find', Properties:{Locale:'en-US',Timezone:'US/Eastern',Selector:`FILTER(order,AND([fulfillment_date]="${ROUTE_DATE}",[pickup_or_delivery]="Delivery"))`}, Rows:[] })
+    });
+    const records = await findResp.json();
+    const editRows = [];
+    stops.forEach((s, idx) => {
+      const rec = records.find(r => r.client_name && r.client_name.toLowerCase().trim() === s.name.toLowerCase().trim());
+      if (rec) editRows.push({ "_RowNumber": rec._RowNumber, "stop_number": String(STOP_NUM_OFFSET + idx + 1) });
+    });
+    if (editRows.length === 0) { toast('⚠️ No matching AppSheet records found', 'amber'); btn.disabled=false; btn.textContent='✅ Approve Route → AppSheet'; return; }
+    await fetch(url, {
+      method: 'POST',
+      headers: {'ApplicationAccessKey': APPSHEET_API_KEY, 'Content-Type': 'application/json'},
+      body: JSON.stringify({ Action:'Edit', Properties:{Locale:'en-US'}, Rows: editRows })
+    });
+    approved = true;
+    btn.className = 'approve-btn approved';
+    btn.textContent = `✅ Route Approved · ${editRows.length} stops updated in AppSheet`;
+    btn.disabled = true;
+    toast(`✅ ${editRows.length} stop numbers written to AppSheet!`, 'green');
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = '✅ Approve Route → AppSheet';
+    btn.style.background = '';
+    toast('❌ Error: ' + e.message, '');
+  }
+}
+
+render();
+</script>
+</body>
+</html>
