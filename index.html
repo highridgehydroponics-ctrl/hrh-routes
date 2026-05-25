@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HRH Route Dashboards</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#1a1d23;color:#e2e8f0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+header{background:#0e1014;border-bottom:2px solid #f59e0b;padding:0 24px;height:54px;display:flex;align-items:center;gap:14px}
+.logo{font-family:monospace;font-size:14px;color:#f59e0b;font-weight:700;letter-spacing:2px}
+.hd{font-size:13px;color:#94a3b8;font-weight:600}
+.sp{flex:1}
+.badge{font-family:monospace;font-size:11px;color:#f59e0b;background:#1e2128;border:1px solid #2a2d35;padding:3px 10px;border-radius:3px}
+.wrap{max-width:720px;margin:32px auto;padding:0 16px 80px}
+.sec{font-family:monospace;font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.card{background:#0e1014;border-radius:8px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.4);margin-bottom:10px;display:flex;align-items:center;text-decoration:none;color:inherit;transition:background .1s}
+.card:hover{background:#141720}
+.card.today{border-left:3px solid #f59e0b}
+.cb{padding:14px 16px;flex:1}
+.ct{display:flex;align-items:center;gap:10px}
+.cd{font-family:monospace;font-size:14px;font-weight:700;color:#fff}
+.dot{width:6px;height:6px;border-radius:50%;background:#64748b;flex-shrink:0}
+.dot.t{background:#f59e0b}
+.dr{font-size:13px;color:#94a3b8;font-weight:600}
+.tag{font-size:10px;font-weight:700;letter-spacing:.5px;padding:2px 7px;border-radius:3px;text-transform:uppercase}
+.tt{background:#7c2d12;color:#fcd34d}
+.tu{background:#1e3a5f;color:#93c5fd}
+.tp{background:#1e2128;color:#475569}
+.arr{padding:0 16px;color:#374151;font-size:18px}
+.card:hover .arr{color:#f59e0b}
+.empty{text-align:center;color:#475569;padding:40px;font-size:13px}
+.spin{text-align:center;padding:48px;color:#475569;font-size:13px}
+.err{background:#2d1515;border:1px solid #7f1d1d;border-radius:6px;padding:12px 16px;color:#fca5a5;font-size:12px;margin-bottom:16px}
+.sep{margin:24px 0 14px;height:1px;background:#1e2128}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">HRH</div>
+  <div class="hd">Route Dashboards</div>
+  <div class="sp"></div>
+  <div class="badge" id="badge">Loading...</div>
+</header>
+<div class="wrap"><div id="out"><div class="spin">Loading routes...</div></div></div>
+<script>
+const OWNER='highridgehydroponics-ctrl',REPO='hrh-routes';
+const BASE='https://'+OWNER+'.github.io/'+REPO;
+function parse(name){
+  const m=name.match(/^route-dashboard-(\d{4}-\d{2}-\d{2})-(.+)\.html$/);
+  if(!m)return null;
+  const[,iso,dr]=m;
+  const[y,mo,d]=iso.split('-').map(Number);
+  const dt=new Date(y,mo-1,d);
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const mons=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return{iso,driver:dr[0].toUpperCase()+dr.slice(1),label:days[dt.getDay()]+' '+mons[mo-1]+' '+d+', '+y,dt,url:BASE+'/'+name};
+}
+function isToday(dt){const n=new Date();return dt.getFullYear()===n.getFullYear()&&dt.getMonth()===n.getMonth()&&dt.getDate()===n.getDate();}
+function isFuture(dt){const n=new Date();n.setHours(0,0,0,0);return dt>=n&&!isToday(dt);}
+function card(r){
+  const tod=isToday(r.dt),fut=isFuture(r.dt);
+  const tag=tod?'Today':fut?'Upcoming':'Past';
+  const tc=tod?'tt':fut?'tu':'tp';
+  return'<a class="card'+(tod?' today':'')+'" href="'+r.url+'" target="_blank" rel="noopener"><div class="cb"><div class="ct"><div class="cd">'+r.label+'</div><div class="dot'+(tod?' t':'')+'"></div><div class="dr">'+r.driver+'</div><span class="tag '+tc+'">'+tag+'</span></div></div><div class="arr">›</div></a>';
+}
+async function go(){
+  try{
+    const res=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/',{headers:{'Accept':'application/vnd.github+json'}});
+    if(!res.ok)throw new Error('GitHub API '+res.status);
+    const files=await res.json();
+    const routes=files.filter(f=>f.name!=='index.html'&&f.name.endsWith('.html')).map(f=>parse(f.name)).filter(Boolean).sort((a,b)=>b.dt-a.dt);
+    document.getElementById('badge').textContent=routes.length+' route'+(routes.length!==1?'s':'');
+    if(!routes.length){document.getElementById('out').innerHTML='<div class="empty">No route dashboards yet.</div>';return;}
+    const tod=routes.filter(r=>isToday(r.dt));
+    const fut=routes.filter(r=>isFuture(r.dt));
+    const past=routes.filter(r=>!isToday(r.dt)&&!isFuture(r.dt));
+    let h='';
+    if(tod.length){h+='<div class="sec">Today's Route</div>'+tod.map(card).join('')+'<div class="sep"></div>';}
+    if(fut.length){h+='<div class="sec">Upcoming</div>'+fut.map(card).join('')+'<div class="sep"></div>';}
+    if(past.length){h+='<div class="sec">Past Routes</div>'+past.map(card).join('');}
+    document.getElementById('out').innerHTML=h;
+  }catch(e){
+    document.getElementById('badge').textContent='Error';
+    document.getElementById('out').innerHTML='<div class="err">Could not load routes: '+e.message+'</div>';
+  }
+}
+go();
+</script>
+</body>
+</html>
